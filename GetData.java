@@ -58,7 +58,7 @@ public class GetData {
 
         
         // start by grabbing all 800 users
-        String queryUsers = "SELECT user_id, first_name, last_name, gender, YEAR_OF_BIRTH, MONTH_OF_BIRTH, DAY_OF_BIRTH FROM project3.public_users";
+        String queryUsers = "SELECT user_id, first_name, last_name, gender, YEAR_OF_BIRTH, MONTH_OF_BIRTH, DAY_OF_BIRTH FROM " + userTableName;
         ResultSet rsUsers = stmt.executeQuery(queryUsers);
         
         // iterate through
@@ -82,7 +82,7 @@ public class GetData {
 
 
             try (Statement stmtFriends = oracleConnection.createStatement()) {
-                String queryFriends = "SELECT user2_id FROM project3.public_friends WHERE user1_id = " + user_id; // user1_id < user2_id in friends table
+                String queryFriends = "SELECT user2_id FROM " + friendsTableName + " WHERE user1_id = " + user_id; // user1_id < user2_id in friends table
                 ResultSet rsFriends = stmtFriends.executeQuery(queryFriends);
 
                 // iterate through friends result set
@@ -102,8 +102,8 @@ public class GetData {
             try (Statement stmtCurrentCity = oracleConnection.createStatement()) {
                 // get current city of user_id (still going through one at a time)
                 String queryCurrent = "SELECT C.city_name, C.state_name, C.country_name " +
-                        "FROM project3.public_cities C " +
-                        "JOIN project3.public_user_current_cities CC ON CC.current_city_id = C.city_id " +
+                        "FROM " + cityTableName + " C " +
+                        "JOIN " + currentCityTableName + " CC ON CC.current_city_id = C.city_id " +
                         "WHERE CC.user_id = " + user_id;
                 ResultSet rsCurrent = stmtCurrentCity.executeQuery(queryCurrent);
 
@@ -118,7 +118,6 @@ public class GetData {
                 rsCurrent.close();
             }
             // userObj.put("current", currentCityObj); // throw it in the object
-            
 
 
             // create the third array of strings - hometown city
@@ -126,8 +125,8 @@ public class GetData {
 
             try (Statement stmtHometownCity = oracleConnection.createStatement()) {
                 String queryHometown = "SELECT C.city_name, C.state_name, C.country_name " +
-                        "FROM project3.public_cities C " +
-                        "JOIN project3.public_user_hometown_cities HC ON HC.hometown_city_id = C.city_id " +
+                        "FROM " + cityTableName + " C " +
+                        "JOIN " + hometownCityTableName + " HC ON HC.hometown_city_id = C.city_id " +
                         "WHERE HC.user_id = " + user_id;
                 ResultSet rsHometown = stmtHometownCity.executeQuery(queryHometown);
 
@@ -147,18 +146,6 @@ public class GetData {
             users_info.put(userObj);
         }
         rsUsers.close();
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         } catch (SQLException e) {
