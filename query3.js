@@ -28,3 +28,4 @@ function cities_table(dbname) {
 
     return;
 }
+
