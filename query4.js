@@ -20,5 +20,35 @@ function suggest_friends(year_diff, dbname) {
     let pairs = [];
     // TODO: implement suggest friends
 
+    // get all users in an array
+    let users = db.users.find({}).toArray();
+
+    // Iterate over all pairs
+    for (let i = 0; i < users.length; i++) {
+        let A = users[i];
+
+        // A has to be a male
+        if (A.gender !== "male") continue;
+        
+        for (let j = 0; j < users.length; j++) {
+            let B = users[j];
+            
+            // B has to be a female
+            if (B.gender !== "female") continue;
+            
+            // continue if not from same hometown city
+            if (A.hometown.city !== B.hometown.city) continue;
+            
+            // if difference is bigger than year_diff, continue
+            if (Math.abs(A.YOB - B.YOB) >= year_diff) continue;
+
+            //finds pairs of NOT friends
+            //if they are friends, then continue
+            if ((A.friends && A.friends.indexOf(B.user_id) !== -1) || (B.friends && B.friends.indexOf(A.user_id) !== -1)) continue;
+            
+            // if we haven't yet continued, valid pair...push
+            pairs.push([A.user_id, B.user_id]);
+        }
+    }
     return pairs;
 }

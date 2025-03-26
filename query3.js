@@ -13,19 +13,12 @@ function cities_table(dbname) {
    // TODO: implement cities collection here
 
     db.users.aggregate([
-        // group documents by current city
-        { 
-            $group: { 
-                //_id: "$user_current_city.CURRENT_CITY_ID",  // city becomes id of the document
-                _id: "$city", 
-                //using addToSet to make sure user ids are distinct
-                users: { $addToSet: "$user_id" }    // Get all unique ids
-            } 
-        },
+        // group documents by current city and then get all unique ids
+        { $group: { _id: "$current.city", users: { $addToSet: "$user_id"} } },
+        
         // output city collection
         { $out: "cities" }
     ]);
 
     return;
 }
-
